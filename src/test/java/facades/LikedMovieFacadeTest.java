@@ -1,5 +1,5 @@
 package facades;
-
+/*
 import utils.EMF_Creator;
 import entities.LikedMovie;
 import entities.User;
@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Test;
 public class LikedMovieFacadeTest {
 
     private static EntityManagerFactory emf;
-    private static LikedMovieFacade facade;
     private static RemoteServerFacade remoteFacade;
 
     public LikedMovieFacadeTest() {
@@ -29,7 +28,6 @@ public class LikedMovieFacadeTest {
     @BeforeAll
     public static void setUpClass() {
        emf = EMF_Creator.createEntityManagerFactoryForTest();
-       facade = LikedMovieFacade.getFacadeExample(emf);
        remoteFacade = RemoteServerFacade.getRemoteServerFacade(emf);
                EntityManager em = emf.createEntityManager();
 
@@ -98,3 +96,4 @@ public class LikedMovieFacadeTest {
     }
 
 }
+*/
