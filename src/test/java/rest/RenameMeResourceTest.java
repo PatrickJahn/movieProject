@@ -67,8 +67,7 @@ public class RenameMeResourceTest {
     public void setUp() {
         EntityManager em = emf.createEntityManager();
         User u = new User("Bobby", "123456");
-        r1 = new LikedMovie("Some txt");
-        r2 = new LikedMovie("aaa");
+    
         try {
             em.getTransaction().begin();
             em.createNamedQuery("LikedMovie.deleteAllRows").executeUpdate();

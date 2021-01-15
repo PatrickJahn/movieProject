@@ -1,9 +1,12 @@
 package entities;
 
+import dto.characterDTO;
+import dto.movieDTO;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -30,17 +33,24 @@ public class User implements Serializable {
   @Size(min = 1, max = 255)
   @Column(name = "user_pass")
   private String userPass;
+  
   @JoinTable(name = "user_roles", joinColumns = {
     @JoinColumn(name = "user_name", referencedColumnName = "user_name")}, inverseJoinColumns = {
     @JoinColumn(name = "role_name", referencedColumnName = "role_name")})
-  @ManyToMany
+  @ManyToMany(cascade = CascadeType.PERSIST)
   private List<Role> roleList = new ArrayList<>();
   
-    @ManyToMany
-    @JoinTable(name = "movies_like", 
+  @ManyToMany(cascade = CascadeType.ALL)
+  @JoinTable(name = "movies_liked", 
   joinColumns = @JoinColumn(name = "user_name", referencedColumnName = "user_name"), 
-  inverseJoinColumns = @JoinColumn(name = "url", referencedColumnName = "url"))
+  inverseJoinColumns = @JoinColumn(name = "id", referencedColumnName = "id"))
   private List<LikedMovie> likedMovies = new ArrayList<>();
+  
+    @ManyToMany(cascade = CascadeType.ALL) 
+      @JoinTable(name = "actors_liked", 
+  joinColumns = @JoinColumn(name = "user_name", referencedColumnName = "user_name"), 
+  inverseJoinColumns = @JoinColumn(name = "id", referencedColumnName = "id"))
+    private List<LikedActor> likesActors = new ArrayList(); 
 
   public List<String> getRolesAsStrings() {
     if (roleList.isEmpty()) {
@@ -68,34 +78,35 @@ public class User implements Serializable {
 
   
   public void addLikedMovie(LikedMovie m){
+      
       likedMovies.add(m);
   }
   
    public void removeLikedMovie(LikedMovie m){
-       
-       
-       for (LikedMovie movie : likedMovies){
-           if (movie.getUrl().equals(m.getUrl())){
-               likedMovies.remove(movie);
-               return;
-           }
+            
+  }
+  
+   public List<movieDTO> getLikedMovies(){
+        List<movieDTO> movies = new ArrayList();
+       for (LikedMovie m : this.likedMovies){
+           movies.add(new movieDTO(m));
+       }
+      return movies ;
+  }
+   
+   
+  public void addActor(LikedActor a){
+
+      likesActors.add(a);
+  }
+  public List<characterDTO> getActors(){
+        List<characterDTO> actors = new ArrayList();
+       for (LikedActor a : this.likesActors){
+           actors.add(new characterDTO(a));
        }
       
-         System.out.println(likedMovies);
-     
+      return actors;
   }
-  
-   public List<String> getLikedMovies(){
-       List<String> urls = new ArrayList();
-      for (LikedMovie m : likedMovies){
-          urls.add(m.getUrl());
-      }
-      return urls;
-  }
-   
-   
-  
-  
   public String getUserName() {
     return userName;
   }

@@ -2,14 +2,11 @@ package rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import entities.User;
 import errorhandling.API_Exception;
 import facades.RemoteServerFacade;
-import java.io.IOException;
+import facades.UserFacade;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -24,6 +21,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import security.errorhandling.AuthenticationException;
 import utils.EMF_Creator;
 
 /**
@@ -35,7 +33,8 @@ public class DemoResource {
     private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory();
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
    private static final RemoteServerFacade remoteFACADE =  RemoteServerFacade.getRemoteServerFacade(EMF);
-    
+       private static final UserFacade FACADE =  UserFacade.getUserFacade(EMF);
+
     @Context
     private UriInfo context;
 
@@ -77,7 +76,7 @@ public class DemoResource {
     public String getFromUser() {
          String thisuser = securityContext.getUserPrincipal().getName();
         
-                   return "{\"msg\": \"Hello to (admin) User: " + thisuser + "\"}";
+                   return "{\"msg\": \"Hello to User: " + thisuser + "\"}";
    
     }
 
@@ -91,6 +90,21 @@ public class DemoResource {
              return "{\"msg\": \"Hello to (admin) User: " + thisuser + "\"}";
     }
     
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("newuser")
+    public String createNewUser(String user) throws AuthenticationException, API_Exception{
+        
+        try {
+         User userToAdd = GSON.fromJson(user, User.class);
+          User addedUser = FACADE.addNewUser(userToAdd);
+        } catch (Exception e){
+           throw new API_Exception(e.getMessage());
+        }
+        return "{\"message\": \"Brugeren +  er nu oprettet"+"\"}";
+        
+    }
     
     
 
